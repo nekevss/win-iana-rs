@@ -17,12 +17,13 @@ pub fn get_iana_time_zone() -> Result<DynamicTimeZone, DynamicTimeZoneError> {
     DynamicTimeZone::get()
 }
 
+#[cfg(target_os = "windows")]
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {
+    fn windows_test_runner() {
         let DynamicTimeZone::DaylightSavingsTimeZone(tz) = get_iana_time_zone().unwrap() else { panic!() };
         println!("{:?}", tz.tz_key_name.as_str());
         println!("{:?}", tz.tz_key_name);
