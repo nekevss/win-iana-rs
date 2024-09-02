@@ -27,7 +27,6 @@ pub fn get_win_time_zone() -> Result<DynamicTimeZone, DynamicTimeZoneError> {
 
 #[cfg(target_os = "windows")]
 pub fn get_iana_time_zone() -> Result<String, DynamicTimeZoneError> {
-
     let local = DynamicTimeZone::get()?;
 
     match local {
@@ -41,14 +40,17 @@ pub fn get_iana_time_zone() -> Result<String, DynamicTimeZoneError> {
 }
 
 // TODO: This is not good. Optimize.
-pub fn map_win_tz_to_iana_tz(target: &str, territory: Option<&str>) -> Result<String, DynamicTimeZoneError> {
+pub fn map_win_tz_to_iana_tz(
+    target: &str,
+    territory: Option<&str>,
+) -> Result<String, DynamicTimeZoneError> {
     let zones_mapping = get_cldr_data()?.supplemental.win_zones.map;
     let target_territory = territory.unwrap_or("001");
 
     for zone in zones_mapping {
         // Yuck, better structs may help here.
-        if &zone.map_zone.windows_id == target && &zone.map_zone.territory == target_territory {
-            return Ok(zone.map_zone.iana_id)
+        if zone.map_zone.windows_id == target && zone.map_zone.territory == target_territory {
+            return Ok(zone.map_zone.iana_id);
         }
     }
 
@@ -59,7 +61,9 @@ pub fn map_win_tz_to_iana_tz(target: &str, territory: Option<&str>) -> Result<St
 fn get_cldr_data() -> Result<CldrData, DynamicTimeZoneError> {
     const WIN_ZONES_PATH: &str = "./cldr-data/cldr-core/supplemental/windowsZones.json";
 
-    let reader = BufReader::new(File::open(WIN_ZONES_PATH).map_err(|_|DynamicTimeZoneError::FileReadError)?);
+    let reader = BufReader::new(
+        File::open(WIN_ZONES_PATH).map_err(|_| DynamicTimeZoneError::FileReadError)?,
+    );
     serde_json::from_reader(reader).map_err(|_| DynamicTimeZoneError::DeserializeDataError)
 }
 
@@ -70,12 +74,13 @@ mod tests {
     #[test]
     #[cfg(target_os = "windows")]
     fn windows_test_runner() {
-        let DynamicTimeZone::DaylightSavingsTimeZone(tz) = get_win_time_zone().unwrap() else { panic!() };
+        let DynamicTimeZone::DaylightSavingsTimeZone(tz) = get_win_time_zone().unwrap() else {
+            panic!()
+        };
         println!("{:?}", tz.tz_key_name.as_str());
         println!("{:?}", tz.tz_key_name);
         println!("{tz:?}");
     }
-
 
     #[test]
     #[cfg(target_os = "windows")]
@@ -83,7 +88,6 @@ mod tests {
         let result = get_iana_time_zone().unwrap();
         println!("{result}");
     }
-
 
     #[test]
     fn default_mapping_tests() {

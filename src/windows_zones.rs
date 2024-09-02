@@ -1,5 +1,5 @@
 // TODO: Handle serde of windowsZones.json
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 pub(crate) struct CldrData {
@@ -14,7 +14,7 @@ pub(crate) struct SupplementalData {
 }
 
 #[derive(Serialize, Deserialize)]
-pub(crate) struct VersionData{
+pub(crate) struct VersionData {
     #[serde(rename = "_unicodeVersion")]
     pub(crate) unicode_version: String,
     #[serde(rename = "_cldrVersion")]
