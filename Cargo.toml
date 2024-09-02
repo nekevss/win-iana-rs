@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+serde = { version = "1.0.209", features = ["derive"]}
+serde_json = "1.0.127"
 tinystr = { path = "../icu4x/utils/tinystr" }
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
