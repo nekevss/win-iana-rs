@@ -6,13 +6,8 @@ use windows_sys::Win32::{
 };
 use core::mem::MaybeUninit;
 
-use crate::DynamicTimeZoneError;
+use crate::{ types::{DynamicTimeZone, DynamicTimeZoneInfo, WinSystemTime}, DynamicTimeZoneError};
 
-#[derive(Debug)]
-pub enum DynamicTimeZone {
-    StandardTimeZone(DynamicTimeZoneInfo),
-    DaylightSavingsTimeZone(DynamicTimeZoneInfo),
-}
 
 impl DynamicTimeZone {
     #[inline]
@@ -21,18 +16,6 @@ impl DynamicTimeZone {
         let code = unsafe { GetDynamicTimeZoneInformation(dyn_tz.as_mut_ptr()) };
         DynamicTimeZoneInfo::from_return_code_and_system_info(code, dyn_tz)
     }
-}
-
-#[derive(Debug)]
-pub struct WinSystemTime {
-    pub wYear: u16,
-    pub wMonth: u16,
-    pub wDayOfWeek: u16,
-    pub wDay: u16,
-    pub wHour: u16,
-    pub wMinute: u16,
-    pub wSecond: u16,
-    pub wMilliseconds: u16,
 }
 
 impl From<SYSTEMTIME> for WinSystemTime {
@@ -48,18 +31,6 @@ impl From<SYSTEMTIME> for WinSystemTime {
             wMilliseconds: value.wMilliseconds,
         }
     }
-}
-
-#[derive(Debug)]
-pub struct DynamicTimeZoneInfo {
-    pub bias: i32,
-    pub standard_name: TinyAsciiStr<32>,
-    pub standard_date: WinSystemTime,
-    pub daylight_name: TinyAsciiStr<32>,
-    pub daylight_date: WinSystemTime,
-    pub daylight_bias: i32,
-    pub tz_key_name: TinyAsciiStr<128>,
-    pub dyn_daylight_time_disabled: u8,
 }
 
 impl DynamicTimeZoneInfo {
