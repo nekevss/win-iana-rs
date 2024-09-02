@@ -1,4 +1,3 @@
-
 use tinystr::TinyAsciiStr;
 
 #[derive(Debug)]
@@ -9,14 +8,14 @@ pub enum DynamicTimeZone {
 
 #[derive(Debug)]
 pub struct WinSystemTime {
-    pub wYear: u16,
-    pub wMonth: u16,
-    pub wDayOfWeek: u16,
-    pub wDay: u16,
-    pub wHour: u16,
-    pub wMinute: u16,
-    pub wSecond: u16,
-    pub wMilliseconds: u16,
+    pub year: u16,
+    pub month: u16,
+    pub day_of_week: u16,
+    pub day: u16,
+    pub hour: u16,
+    pub minute: u16,
+    pub second: u16,
+    pub milliseconds: u16,
 }
 
 #[derive(Debug)]

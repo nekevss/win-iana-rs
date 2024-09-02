@@ -1,13 +1,14 @@
-
+use core::mem::MaybeUninit;
 use tinystr::TinyAsciiStr;
 use windows_sys::Win32::{
     Foundation::SYSTEMTIME,
     System::Time::{GetDynamicTimeZoneInformation, DYNAMIC_TIME_ZONE_INFORMATION},
 };
-use core::mem::MaybeUninit;
 
-use crate::{ types::{DynamicTimeZone, DynamicTimeZoneInfo, WinSystemTime}, DynamicTimeZoneError};
-
+use crate::{
+    types::{DynamicTimeZone, DynamicTimeZoneInfo, WinSystemTime},
+    DynamicTimeZoneError,
+};
 
 impl DynamicTimeZone {
     #[inline]
@@ -21,14 +22,14 @@ impl DynamicTimeZone {
 impl From<SYSTEMTIME> for WinSystemTime {
     fn from(value: SYSTEMTIME) -> Self {
         Self {
-            wYear: value.wYear,
-            wMonth: value.wMonth,
-            wDayOfWeek: value.wDayOfWeek,
-            wDay: value.wDay,
-            wHour: value.wHour,
-            wMinute: value.wMinute,
-            wSecond: value.wSecond,
-            wMilliseconds: value.wMilliseconds,
+            year: value.wYear,
+            month: value.wMonth,
+            day_of_week: value.wDayOfWeek,
+            day: value.wDay,
+            hour: value.wHour,
+            minute: value.wMinute,
+            second: value.wSecond,
+            milliseconds: value.wMilliseconds,
         }
     }
 }
@@ -64,11 +65,11 @@ impl DynamicTimeZoneInfo {
             0 => Err(DynamicTimeZoneError::TimeZoneUnknown),
             // Safety: Return code from Windows was successful.
             1 => Ok(DynamicTimeZone::StandardTimeZone(
-                DynamicTimeZoneInfo::try_from_system_info(unsafe {info.assume_init() })?,
+                DynamicTimeZoneInfo::try_from_system_info(unsafe { info.assume_init() })?,
             )),
             // Safety: Return code from Windows was successful.
             2 => Ok(DynamicTimeZone::DaylightSavingsTimeZone(
-                DynamicTimeZoneInfo::try_from_system_info(unsafe {info.assume_init() })?,
+                DynamicTimeZoneInfo::try_from_system_info(unsafe { info.assume_init() })?,
             )),
             _ => Err(DynamicTimeZoneError::InvalidReturnCode),
         }
