@@ -18,6 +18,8 @@ pub enum DynamicTimeZoneError {
     IllformedTimeZoneString,
     FileReadError,
     DeserializeDataError,
+    ParsingError(tinystr::ParseError),
+    SyscallErrorCode(u32),
 }
 
 #[cfg(target_os = "windows")]
@@ -27,14 +29,17 @@ pub fn get_win_time_zone() -> Result<DynamicTimeZone, DynamicTimeZoneError> {
 
 #[cfg(target_os = "windows")]
 pub fn get_iana_time_zone() -> Result<String, DynamicTimeZoneError> {
+    use windows::get_geoname;
+
     let local = DynamicTimeZone::get()?;
+    let geoname = get_geoname()?;
 
     match local {
         DynamicTimeZone::DaylightSavingsTimeZone(zoneinfo) => {
-            map_win_tz_to_iana_tz(zoneinfo.tz_key_name.as_str(), None)
+            map_win_tz_to_iana_tz(zoneinfo.tz_key_name.as_str(), Some(geoname.as_str()))
         }
         DynamicTimeZone::StandardTimeZone(zoneinfo) => {
-            map_win_tz_to_iana_tz(zoneinfo.tz_key_name.as_str(), None)
+            map_win_tz_to_iana_tz(zoneinfo.tz_key_name.as_str(), Some(geoname.as_str()))
         }
     }
 }
